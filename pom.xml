@@ -33,8 +33,7 @@
 		<version>1.399</version>
 	</parent>
 
-	<groupId>info.noirbizarre.jenkins.plugins</groupId>
-	<artifactId>description-column</artifactId>
+	<artifactId>description-column-plugin</artifactId>
 	<version>1.1-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 
@@ -47,7 +46,7 @@
 	<licenses>
 		<license>
 			<name>The MIT license</name>
-			<url>https://raw.github.com/noirbizarre/description-column/master/LICENSE</url>
+			<url>https://raw.github.com/jenkinsci/description-column-plugin/master/LICENSE</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
