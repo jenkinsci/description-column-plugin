@@ -22,7 +22,13 @@
   THE SOFTWARE.
 -->
 
-<j:jelly xmlns:j="jelly:core">
-  <j:set var="description" value="${job.description}"/>
-  <td tooltip="${job.description}">${it.formatDescription(description)}</td>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+	
+	<f:optionalBlock field="trim" title="${%DescriptionColumn.Trim}" inline="true">
+		<f:entry title="${%DescriptionColumn.DisplayLength}">
+			<f:textbox field="displayLength" default="1" />
+		</f:entry>
+	</f:optionalBlock>
 </j:jelly>

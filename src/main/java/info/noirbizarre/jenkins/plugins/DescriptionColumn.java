@@ -32,14 +32,50 @@ import hudson.views.ListViewColumn;
 
 public class DescriptionColumn extends ListViewColumn {
 	
+	private boolean trim;
+	private int displayLength;
+	
+	private final static String SEPARATOR = "<br/>";
+	private final static String SEPARATORS_REGEX = "(?i)<br\\s*/>|<br>";
+	
 	@DataBoundConstructor
-	public DescriptionColumn() {
+	public DescriptionColumn(boolean trim, int displayLength) {
 		super();
+		this.trim = trim;
+		this.displayLength = displayLength;
+	}
+	
+	public boolean isTrim() {
+		return trim;
+	}
+
+	public int getDisplayLength() {
+		return displayLength;
+	}
+	
+	public String formatDescription(String desc) {
+		if (!trim) {
+			return desc;
+		}
+		String[] parts = desc.split(SEPARATORS_REGEX);
+		StringBuffer sb = new StringBuffer();
+		for (int i=0; i < displayLength && i < parts.length ; i++) {
+			if (i != 0) {
+				sb.append(SEPARATOR);
+			}
+			sb.append(parts[i]);
+		}
+		return sb.toString();
 	}
 	
 	@Extension
 	public static class DescriptorImpl extends ListViewColumnDescriptor {
 
+		@Override
+		public boolean shownByDefault() {
+			return false;
+		}
+		
 		@Override
 		public String getDisplayName() {
 			return Messages.DescriptionColumn_DisplayName();
