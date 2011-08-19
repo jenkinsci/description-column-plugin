@@ -54,6 +54,9 @@ public class DescriptionColumn extends ListViewColumn {
 	}
 	
 	public String formatDescription(String desc) {
+		if (desc == null) {
+			return "";
+		}
 		if (!trim) {
 			return desc;
 		}
