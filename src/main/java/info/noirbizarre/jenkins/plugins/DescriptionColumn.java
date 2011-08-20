@@ -83,5 +83,10 @@ public class DescriptionColumn extends ListViewColumn {
 		public String getDisplayName() {
 			return Messages.DescriptionColumn_DisplayName();
 		}
+		
+		@Override
+        public String getHelpFile() {
+            return "/plugin/description-column-plugin/description-column-help.html";
+        }
 	}
 }
