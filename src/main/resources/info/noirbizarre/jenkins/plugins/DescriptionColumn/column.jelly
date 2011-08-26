@@ -23,6 +23,6 @@
 -->
 
 <j:jelly xmlns:j="jelly:core">
-  <j:set var="description" value="${job.description}"/>
-  <td tooltip="${job.description}">${it.formatDescription(description)}</td>
+  <j:set var="job" value="${job}"/>
+  <td tooltip="${job.description}">${it.formatDescription(job)}</td>
 </j:jelly>

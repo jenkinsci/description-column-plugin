@@ -26,6 +26,13 @@ package info.noirbizarre.jenkins.plugins;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+import java.util.SortedMap;
+
+import hudson.model.Job;
+import hudson.model.Run;
+
+import org.junit.Before;
 import org.junit.Test;
 
 public class DescriptionColumnTest {
@@ -34,27 +41,79 @@ public class DescriptionColumnTest {
 	
 	private final static String MULTILINE_DESCRIPTION = "Just a test<br/>Another Line<br>One <b>more</b> line<BR>Last line";
 	
-	private final static String SEPARATOR = "<br/>";
+	private Job job;
+	
+	@SuppressWarnings("rawtypes")
+	private static class TestJob extends Job {
+
+		private String description;
+		
+		protected TestJob(String name) {
+			super(null, name);
+		}
+
+		@Override
+		protected SortedMap _getRuns() {
+			return null;
+		}
+
+		@Override
+		public boolean isBuildable() {
+			return false;
+		}
+
+		@Override
+		protected void removeRun(Run arg0) {
+			
+		}
+		
+		@Override
+		public void setDescription(String description) throws IOException {
+			this.description = description;
+		}
+		
+		@Override
+		public String getDescription() {
+			return description;
+		}
+		
+	}
+	
+	@Before
+	public void setUp() {
+		job = new TestJob("My Job");
+	}
 	
 	@Test
-	public void formatWithoutTrimming() {
-		DescriptionColumn plugin = new DescriptionColumn(false, 2);
-		String result = plugin.formatDescription(SIMPLE_DESCRIPTION);
+	public void formatWithoutTrimming() throws IOException {
+		DescriptionColumn plugin = new DescriptionColumn(false, false, 2);
+		job.setDescription(SIMPLE_DESCRIPTION);
+		String result = plugin.formatDescription(job);
 		assertEquals(SIMPLE_DESCRIPTION, result);
-		result = plugin.formatDescription(MULTILINE_DESCRIPTION);
+		job.setDescription(MULTILINE_DESCRIPTION);
+		result = plugin.formatDescription(job);
 		assertEquals(MULTILINE_DESCRIPTION, result);
 	}
 	
 	@Test
-	public void formatWithTrimming() {
-		DescriptionColumn plugin = new DescriptionColumn(true, 2);
-		String result = plugin.formatDescription(SIMPLE_DESCRIPTION);
+	public void formatWithTrimming() throws IOException {
+		DescriptionColumn plugin = new DescriptionColumn(false, true, 2);
+		job.setDescription(SIMPLE_DESCRIPTION);
+		String result = plugin.formatDescription(job);
 		assertEquals(SIMPLE_DESCRIPTION, result);
-		result = plugin.formatDescription(MULTILINE_DESCRIPTION);
+		job.setDescription(MULTILINE_DESCRIPTION);
+		result = plugin.formatDescription(job);
 		assertEquals("Just a test<br/>Another Line", result);
-		
-		plugin = new DescriptionColumn(true, 7);
-		result = plugin.formatDescription(MULTILINE_DESCRIPTION);
+		plugin = new DescriptionColumn(false, true, 7);
+		result = plugin.formatDescription(job);
 		assertEquals("Just a test<br/>Another Line<br/>One <b>more</b> line<br/>Last line", result);
+	}
+	
+	@Test
+	public void displayName() throws IOException {
+		DescriptionColumn plugin = new DescriptionColumn(true, false, 2);
+		job.setDescription(SIMPLE_DESCRIPTION);
+		String result = plugin.formatDescription(job);
+		assertEquals("<b>My Job</b><br/>Just a test", result);
 	}
 }

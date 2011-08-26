@@ -27,24 +27,32 @@ package info.noirbizarre.jenkins.plugins;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import hudson.Extension;
+import hudson.model.Job;
 import hudson.views.ListViewColumnDescriptor;
 import hudson.views.ListViewColumn;
 
 public class DescriptionColumn extends ListViewColumn {
 	
+	private boolean displayName;
 	private boolean trim;
 	private int displayLength;
+	
 	
 	private final static String SEPARATOR = "<br/>";
 	private final static String SEPARATORS_REGEX = "(?i)<br\\s*/>|<br>";
 	
 	@DataBoundConstructor
-	public DescriptionColumn(boolean trim, int displayLength) {
+	public DescriptionColumn(boolean displayName, boolean trim, int displayLength) {
 		super();
+		this.displayName = displayName;
 		this.trim = trim;
 		this.displayLength = displayLength;
 	}
 	
+	public boolean isDisplayName() {
+		return displayName;
+	}
+
 	public boolean isTrim() {
 		return trim;
 	}
@@ -53,21 +61,30 @@ public class DescriptionColumn extends ListViewColumn {
 		return displayLength;
 	}
 	
-	public String formatDescription(String desc) {
-		if (desc == null) {
+	public String formatDescription(@SuppressWarnings("rawtypes") Job job) {
+		if (job == null) {
+			return null;
+		}
+		if (job.getDescription() == null) {
 			return "";
 		}
-		if (!trim) {
-			return desc;
-		}
-		String[] parts = desc.split(SEPARATORS_REGEX);
+		
 		StringBuffer sb = new StringBuffer();
-		for (int i=0; i < displayLength && i < parts.length ; i++) {
-			if (i != 0) {
-				sb.append(SEPARATOR);
-			}
-			sb.append(parts[i]);
+		if (displayName) {
+			sb.append("<b>").append(job.getDisplayName()).append("</b><br/>");
 		}
+		if (!trim) {
+			sb.append(job.getDescription());
+		} else {
+			String[] parts = job.getDescription().split(SEPARATORS_REGEX);
+			for (int i=0; i < displayLength && i < parts.length ; i++) {
+				if (i != 0) {
+					sb.append(SEPARATOR);
+				}
+				sb.append(parts[i]);
+			}
+		}
+		
 		return sb.toString();
 	}
 	
